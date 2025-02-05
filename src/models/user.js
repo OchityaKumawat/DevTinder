@@ -68,6 +68,25 @@ const userSchema = new mongoose.Schema(
       enum: ["male", "female", "non-binary", "other"],
       default: "other",
     },
+    skills: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: function (skillsArray) {
+          return skillsArray.every(
+            (skill) => typeof skill === "string" && skill.trim().length > 0
+          );
+        },
+        message: "Each skill must be a non-empty string",
+      },
+    },
+
+    about: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: "",
+    },
   },
   { timestamps: true }
 );
