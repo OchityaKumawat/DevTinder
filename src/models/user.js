@@ -40,8 +40,19 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 8,
       select: false, // Prevent password from being returned in queries
+      validate: {
+        validator: (value) =>
+          validator.isStrongPassword(value, {
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+          }),
+        message:
+          "Password must be at least 8 characters long, including an uppercase letter, a lowercase letter, a number, and a special character.",
+      },
     },
     age: {
       type: Number,
@@ -81,7 +92,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 userSchema.methods.getJWT = async function () {
   const user = this;
   const token = jwt.sign({ _id: user._id }, "DEV@Tinder$790", {
-    expiresIn: "1h", // Set expiration for the token
+    expiresIn: "7h", // Set expiration for the token
   });
   return token;
 };
